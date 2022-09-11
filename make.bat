@@ -1,8 +1,12 @@
 @echo off
-pushd "%~dp0\out"
 
-cmake.exe -S .. -B .
+set CFG_NAME=%1
+if "%CFG_NAME%" == "" (
+	set CFG_NAME=Debug
+)
 
-cmake.exe --build .
-
+pushd %~dp0
+cmake.exe -S . -B ./out
+cmake.exe --build ./out --config %CFG_NAME%
+cmake.exe --install ./out --prefix . --config %CFG_NAME%
 popd
