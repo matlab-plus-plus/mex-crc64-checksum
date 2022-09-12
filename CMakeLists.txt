@@ -15,14 +15,7 @@ add_executable(crc64)
 set_target_properties( crc64
     PROPERTIES
 	CXX_STANDARD 23
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 
 target_sources(
 	crc64
@@ -42,7 +35,7 @@ target_include_directories(
 find_package(Matlab 9.8 REQUIRED)
 matlab_add_mex(
 	NAME crc_mex
-	MODULE
+	SHARED
 	OUTPUT_NAME crc64
 	R2018a
 )
@@ -66,7 +59,6 @@ target_sources(
 set_target_properties( crc_mex
     PROPERTIES
 	CXX_STANDARD 23
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
+
+install(TARGETS crc64 crc_mex)
