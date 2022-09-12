@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(crc64 VERSION 1.0.0)
 
+# Enable testing
+include(CTest)
+
 add_subdirectory(./ext-deps)
 
 add_executable(crc64)
@@ -59,5 +62,8 @@ target_link_libraries(
 	crc_mex
 	Boost::crc # Must be public even though we would prefer private due to already using 'Plain' signature implicitly in the matlab_add_mex command
 )
+
+# Tests
+add_subdirectory(./test)
 
 install(TARGETS crc64 crc_mex)
