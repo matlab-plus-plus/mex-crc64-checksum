@@ -1,0 +1,6 @@
+# Make external dependencies
+
+cmake_minimum_required(VERSION 3.22)
+project(crcdeps)
+
+add_subdirectory(./BoostCrc)
