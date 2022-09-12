@@ -1,16 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(crc64 VERSION 1.0.0)
 
-add_subdirectory("../LFSRLib/" "${CMAKE_SOURCE_DIR}/ext/lfsrlib")
-
-#set(Boost_DIR C:/Sandbox/CPP_Libs/boost_1_78_0/tools/boost_install)
-set(Boost_INCLUDE_DIR C:/Sandbox/CPP_Libs/boost_1_78_0)
-set(Boost_LIBRARY_DIR C:/Sandbox/CPP_Libs/boost_1_78_0/libs)
-find_package(Boost 1.78 REQUIRED)
+add_subdirectory(./ext-deps)
 
 add_executable(crc64)
-#target_link_libraries(crc64 lfsr_lib)
-#target_link_libraries(crc64 Boost::crc)
 
 set_target_properties( crc64
     PROPERTIES
@@ -23,13 +16,16 @@ target_sources(
 	        "./src/main.cpp"
 			"./src/crc.cpp"
 			"./inc/application/codes.hpp"
-			"C:/Sandbox/CPP_Libs/boost_1_78_0/boost/crc.hpp"
 )
 
 target_include_directories(
 	crc64
 	PRIVATE "./inc"
-	        "C:/Sandbox/CPP_Libs/boost_1_78_0"
+)
+
+target_link_libraries(
+	crc64
+	PRIVATE Boost::crc
 )
 
 find_package(Matlab 9.8 REQUIRED)
@@ -44,7 +40,6 @@ target_include_directories(
 	crc_mex
 	PRIVATE "./inc"
 	        "${Matlab_INCLUDE_DIRS}"
-			"C:/Sandbox/CPP_Libs/boost_1_78_0"
 )
 
 target_sources(
@@ -53,12 +48,16 @@ target_sources(
 	        "./src/crc_mex.cpp"
 			"./src/crc.cpp"
 			"./inc/application/codes.hpp"
-			"C:/Sandbox/CPP_Libs/boost_1_78_0/boost/crc.hpp"
 )
 
 set_target_properties( crc_mex
     PROPERTIES
 	CXX_STANDARD 23
+)
+
+target_link_libraries(
+	crc_mex
+	Boost::crc # Must be public even though we would prefer private due to already using 'Plain' signature implicitly in the matlab_add_mex command
 )
 
 install(TARGETS crc64 crc_mex)
