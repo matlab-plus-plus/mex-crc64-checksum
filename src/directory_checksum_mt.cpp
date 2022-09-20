@@ -9,11 +9,12 @@
 
 #include <algorithm>
 #include <cassert>
+#include <execution>
 #include <filesystem>
 #include <string>
 #include <vector>
 
-namespace fs     = std::filesystem;
+namespace fs = std::filesystem;
 
 namespace
 {
@@ -68,7 +69,8 @@ namespace crc
 		// Compute the checksum of all the files in the directory
 		// and then sort them
 		std::vector<file_code> codeList{ pathVect.size() };
-		std::transform(pathVect.cbegin(), pathVect.cend(), codeList.begin(),
+		std::transform(std::execution::par,
+			pathVect.cbegin(), pathVect.cend(), codeList.begin(),
 			[](auto const& p) {return file_code(p, calc_checksum(p)); });
 
 		// Sort the codes
