@@ -13,15 +13,15 @@ add_test(
 
 add_test(
 	NAME f_check
-	COMMAND $<TARGET_FILE:crc64> ${TEST_DATA_FILE_DIR}\\check.txt | findstr "^995DC9BBDF1939FA$"
+	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> check.txt 995DC9BBDF1939FA
 )
 
 add_test(
 	NAME f_check_reverse
-	COMMAND $<TARGET_FILE:crc64> ${TEST_DATA_FILE_DIR}\\check-reverse.txt | findstr "^E7ADEF3D663C7E22$"
+	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> check-reverse.txt E7ADEF3D663C7E22
 )
 
 add_test(
 	NAME f_eight_ones
-	COMMAND $<TARGET_FILE:crc64> ${TEST_DATA_FILE_DIR}\\eight-ones.txt | findstr "^E7ADEF3D663C7E22$"
+	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> eight-ones.txt A05AC6AA26A9F8B1
 )
