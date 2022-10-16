@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 3.22)
 project(crc64_tests)
 
 cmake_path(NATIVE_PATH CMAKE_CURRENT_SOURCE_DIR TEST_DATA_FILE_DIR)
+set(TEST_DRIVER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test-driver.bat)
 
 add_test(
 	NAME f_empty
-	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test-driver.bat $<TARGET_FILE:crc64> empty.txt 0000000000000000
+	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> empty.txt 0000000000000000
 )
 
 add_test(
