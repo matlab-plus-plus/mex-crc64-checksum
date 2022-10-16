@@ -71,3 +71,6 @@ target_link_libraries(
 )
 
 install(TARGETS crc64 crc_mex)
+install(TARGETS crc_mex
+	RUNTIME DESTINATION ./matlab_code/+crc64/private
+)
