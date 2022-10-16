@@ -9,12 +9,12 @@
 
 class MexFunction : public matlab::mex::Function {
 public:
-	void operator()(matlab::mex::ArgumentList outputs, matlab::mex::ArgumentList inputs)
+	void operator()(matlab::mex::ArgumentList outputs, matlab::mex::ArgumentList inputs) override
 	{
 		unsigned int opt = inputs[0][0];
 		matlab::data::CharArray textInput = inputs[1];
 
-		crc::checksum_t outVal;
+		crc::checksum_t outVal{ 0U };
 		if (opt == 0U) {
 			// Compute checksum of a file
 			std::filesystem::path fp{ textInput.toAscii() };
