@@ -16,8 +16,13 @@ set_target_properties( crc64
 target_sources(
 	crc64
 	PRIVATE "./inc/crc.hpp"
+	        "./inc/private/directory_checksum_mt.hpp"
+			"./inc/private/chk_fmt.hpp"
+			"./inc/private/ext_def.hpp"
 	        "./src/main.cpp"
 			"./src/crc.cpp"
+			"./src/directory_checksum_mt.cpp"
+			"./src/chk_fmt.cpp"
 			"./inc/application/codes.hpp"
 )
 
@@ -48,8 +53,13 @@ target_include_directories(
 target_sources(
 	crc_mex
 	PRIVATE "./inc/crc.hpp"
+	        "./inc/private/directory_checksum_mt.hpp"
+			"./inc/private/chk_fmt.hpp"
+			"./inc/private/ext_def.hpp"
 	        "./src/crc_mex.cpp"
 			"./src/crc.cpp"
+			"./src/directory_checksum_mt.cpp"
+			"./src/chk_fmt.cpp"
 			"./inc/application/codes.hpp"
 )
 
@@ -67,3 +77,6 @@ target_link_libraries(
 add_subdirectory(./test)
 
 install(TARGETS crc64 crc_mex)
+install(TARGETS crc_mex
+	RUNTIME DESTINATION ./matlab_code/+crc64/private
+)

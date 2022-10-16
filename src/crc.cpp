@@ -1,25 +1,11 @@
 #include "crc.hpp"
-
-#include "boost/crc.hpp"
+#include "private/chk_fmt.hpp"
+#include "private/ext_def.hpp"
 
 #include <filesystem>
-#include <format>
 #include <fstream>
 #include <istream>
 #include <string>
-
-namespace {
-	// CRC-64/XZ from https://reveng.sourceforge.io/crc-catalogue/all.htm
-	using boost_crc64 = boost::crc_optimal< 64, 0x42f0e1eba9ea3693, 0xffffffffffffffff, 0xffffffffffffffff, true, true >;
-
-	// Persistent crc64 calculator
-	boost_crc64 crc64_calc;
-
-	std::string format_checksum(crc::checksum_t const csum)
-	{
-		return std::format("{:016X}", csum);
-	}
-}
 
 namespace crc
 {
@@ -28,11 +14,11 @@ namespace crc
 
 	std::string str_checksum(std::filesystem::path const fp)
 	{
-		return format_checksum(calc_checksum(fp));
+		return _internal::format_checksum(calc_checksum(fp));
 	}
 	std::string str_checksum(std::istream& is)
 	{
-		return format_checksum(calc_checksum(is));
+		return _internal::format_checksum(calc_checksum(is));
 	}
 
 	checksum_t calc_checksum(std::filesystem::path const fp)
@@ -50,6 +36,7 @@ namespace crc
 	checksum_t calc_checksum(std::istream& is)
 	{
 		/* Calculates the checksum of an input stream */
+		ext::boost_crc64 crc64_calc{};
 		crc64_calc.reset();
 
 		unsigned char thisByte;

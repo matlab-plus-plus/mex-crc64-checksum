@@ -1,5 +1,6 @@
 #include "crc.hpp"
 #include "application/codes.hpp"
+#include "private/directory_checksum_mt.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -20,6 +21,12 @@ int main(int argc, char* argv[])
 	{
 		std::cerr << "File '" << f << "' does not exist\n";
 		return codes::return_code<codes::eReturnCode::FILE_NOT_FOUND_ERROR>;
+	}
+
+	if (std::filesystem::is_directory(f))
+	{
+		std::cout << crc::str_dir_checksum(f);
+		return codes::return_code<codes::eReturnCode::SUCCESS>;
 	}
 
 	/* Open input filestream from provided file */
