@@ -77,6 +77,9 @@ target_link_libraries(
 add_subdirectory(./test)
 
 install(TARGETS crc64 crc_mex)
+install(DIRECTORY matlab_code/+crc64
+	DESTINATION ./
+)
 install(TARGETS crc_mex
-	RUNTIME DESTINATION ./matlab_code/+crc64/private
+	RUNTIME DESTINATION ./+crc64/private
 )

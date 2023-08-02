@@ -6,7 +6,7 @@ if "%CFG_NAME%" == "" (
 )
 
 pushd %~dp0
-cmake.exe -S . -B ./out
-cmake.exe --build ./out --config %CFG_NAME%
-cmake.exe --install ./out --prefix . --config %CFG_NAME%
+cmake.exe -S . -B ./out/build
+cmake.exe --build ./out/build --config %CFG_NAME%
+cmake.exe --install ./out/build --prefix ./out/install --config %CFG_NAME%
 popd
