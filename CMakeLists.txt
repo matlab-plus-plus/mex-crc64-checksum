@@ -1,10 +1,32 @@
 cmake_minimum_required(VERSION 3.20)
 project(crc64 VERSION 1.0.0)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Enable testing
 include(CTest)
 
 add_subdirectory(./ext-deps)
+
+add_library(crc64_lib STATIC)
+target_sources(
+	crc64_lib
+	PUBLIC "./inc/crc.hpp"
+	       "./src/crc.cpp"
+		   "./inc/private/directory_checksum_mt.hpp"
+		   "./src/directory_checksum_mt.cpp"
+           "./inc/private/chk_fmt.hpp"
+	       "./src/chk_fmt.cpp"
+)
+target_link_libraries(
+	crc64_lib
+	PUBLIC Boost::crc
+)
+target_include_directories(
+	crc64_lib
+	PUBLIC "./inc"
+)
 
 add_executable(crc64)
 
@@ -15,15 +37,8 @@ set_target_properties( crc64
 
 target_sources(
 	crc64
-	PRIVATE "./inc/crc.hpp"
-	        "./inc/private/directory_checksum_mt.hpp"
-			"./inc/private/chk_fmt.hpp"
-			"./inc/private/ext_def.hpp"
-	        "./src/main.cpp"
-			"./src/crc.cpp"
-			"./src/directory_checksum_mt.cpp"
-			"./src/chk_fmt.cpp"
-			"./inc/application/codes.hpp"
+	PUBLIC  "./inc/application/codes.hpp"
+	PRIVATE "./src/main.cpp"
 )
 
 target_include_directories(
@@ -33,7 +48,7 @@ target_include_directories(
 
 target_link_libraries(
 	crc64
-	PRIVATE Boost::crc
+	PRIVATE crc64_lib
 )
 
 find_package(Matlab 9.8 REQUIRED)
@@ -46,20 +61,12 @@ matlab_add_mex(
 
 target_include_directories(
 	crc_mex
-	PRIVATE "./inc"
-	        "${Matlab_INCLUDE_DIRS}"
+	PRIVATE "${Matlab_INCLUDE_DIRS}"
 )
 
 target_sources(
 	crc_mex
-	PRIVATE "./inc/crc.hpp"
-	        "./inc/private/directory_checksum_mt.hpp"
-			"./inc/private/chk_fmt.hpp"
-			"./inc/private/ext_def.hpp"
-	        "./src/crc_mex.cpp"
-			"./src/crc.cpp"
-			"./src/directory_checksum_mt.cpp"
-			"./src/chk_fmt.cpp"
+	PRIVATE "./src/crc_mex.cpp"
 			"./inc/application/codes.hpp"
 )
 
@@ -70,13 +77,13 @@ set_target_properties( crc_mex
 
 target_link_libraries(
 	crc_mex
-	Boost::crc # Must be public even though we would prefer private due to already using 'Plain' signature implicitly in the matlab_add_mex command
+	crc64_lib # Must be public even though we would prefer private due to already using 'Plain' signature implicitly in the matlab_add_mex command
 )
 
 # Tests
 add_subdirectory(./test)
 
-install(TARGETS crc64 crc_mex)
+install(TARGETS crc64_lib crc64 crc_mex)
 install(DIRECTORY matlab_code/+crc64
 	DESTINATION ./
 )

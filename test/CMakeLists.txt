@@ -3,7 +3,24 @@
 cmake_minimum_required(VERSION 3.22)
 project(crc64_tests)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(TEST_DRIVER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test-driver.bat)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+# So that GoogleTest does not get installed with this project
+option(INSTALL_GTEST "Enable installation of googletest." OFF)
+
+FetchContent_MakeAvailable(googletest)
 
 add_test(
 	NAME f_empty
@@ -54,3 +71,15 @@ add_test(
 	NAME f_test
 	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> test.txt DD9ACD49D90CE187
 )
+
+#add_executable(
+#	hang_test
+#	./src/hang_test.cpp
+#)
+#target_link_libraries(
+#	hang_test
+#	PRIVATE crc64_lib GTest::gtest_main
+#)
+#
+#include(GoogleTest)
+#gtest_discover_tests(hang_test)
