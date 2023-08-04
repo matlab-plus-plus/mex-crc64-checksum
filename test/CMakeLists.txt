@@ -72,14 +72,19 @@ add_test(
 	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> test.txt DD9ACD49D90CE187
 )
 
-#add_executable(
-#	hang_test
-#	./src/hang_test.cpp
-#)
-#target_link_libraries(
-#	hang_test
-#	PRIVATE crc64_lib GTest::gtest_main
-#)
-#
-#include(GoogleTest)
-#gtest_discover_tests(hang_test)
+add_executable(
+	hang_test
+	./src/hang_test.cpp
+)
+target_link_libraries(
+	hang_test
+	PRIVATE crc64_lib GTest::gtest_main
+)
+
+include(GoogleTest)
+# We need to limit the time for the hang tests because by definition,
+# they catch bugs where the program hangs.
+gtest_discover_tests(
+	hang_test
+	PROPERTIES TIMEOUT 0.2
+)
