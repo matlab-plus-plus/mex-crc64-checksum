@@ -4,9 +4,48 @@
 
 #include <filesystem>
 #include <fstream>
+#include <stdio.h>
 
-// Ensure test does not hang when getting checksum of an already-opened file.
-TEST(HangTest, TryReadNonexistentFile) {
+// Create fixture for temporary file creation
+class TempFolderTest : public ::testing::Test
+{
+protected:
+	void SetUp() override
+	{
+		tempFolder = std::filesystem::temp_directory_path();
+
+		{
+			char const* tmpFolderStemName = tmpnam(nullptr);
+			tempFolder /= tmpFolderStemName;
+			delete tmpFolderStemName;
+		}
+
+		std::filesystem::create_directory(tempFolder);
+	}
+
+	void TearDown() override
+	{
+		// Delete the directory we created during setup and everything inside.
+		std::filesystem::remove_all(tempFolder);
+	}
+
+	std::filesystem::path tempFolder;
+};
+
+// Function for creating file if it doesn't already exist.
+[[maybe_unused]] bool create_file(std::filesystem::path const& file_name)
+{
+	if (std::filesystem::exists(file_name))
+		return false;
+
+	[[maybe_unused]] auto const fs = std::ofstream(file_name, std::ios::out);
+
+	return true;
+}
+
+// Ensure test does not hang when getting checksum of a nonexistent file.
+TEST(HangTest, TryReadNonexistentFile)
+{
 	// Open the file in another stream
 	std::filesystem::path const test_file{ "sfjsdfijojeflkjdef.txt" };
 
@@ -22,4 +61,33 @@ TEST(HangTest, TryReadNonexistentFile) {
 	ASSERT_FALSE(file_open_attempt.good()) << "File should not have opened for our test's sake";
 
 	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
+}
+
+// Ensure test does not hang when getting checksum of an already-opened file.
+TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
+{
+	auto const test_file = tempFolder / "test.txt";
+	create_file(test_file);
+	
+	constexpr auto fset{ std::ios::binary | std::ios::out };
+
+	auto file_open_first = std::ifstream(test_file, fset);
+
+	ASSERT_TRUE(std::filesystem::exists(test_file)) << "File should exist because we just created it.";
+
+	auto file_open_second_attempt = std::ifstream(test_file, fset);
+
+	ASSERT_FALSE(file_open_second_attempt.good()) << "File should not be able to be opened the second time because it is already opened.";
+
+	crc::checksum_t const actVal{ crc::calc_checksum(file_open_second_attempt) };
+
+}
+
+// Ensure test does not hang when trying to open a really long file path (>260 characters)
+TEST_F(TempFolderTest, TryReadReallyLongFile)
+{
+	// Long file name generated as a random 257-character string on https://codebeautify.org/generate-random-string
+	auto const test_file = tempFolder / "GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBULPwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz";
+	create_file(test_file);
+	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
 }
