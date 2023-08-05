@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stdio.h>
+#include <string_view>
 
 // Create fixture for temporary file creation
 class TempFolderTest : public ::testing::Test
@@ -33,12 +34,14 @@ protected:
 };
 
 // Function for creating file if it doesn't already exist.
-[[maybe_unused]] bool create_file(std::filesystem::path const& file_name)
+[[maybe_unused]] bool create_file(std::filesystem::path const& file_name, std::string_view contents = "")
 {
 	if (std::filesystem::exists(file_name))
 		return false;
 
-	[[maybe_unused]] auto const fs = std::ofstream(file_name, std::ios::out);
+	auto fs = std::ofstream(file_name, std::ios::out);
+	if (!contents.empty())
+		fs << contents;
 
 	return true;
 }
@@ -96,7 +99,7 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 TEST_F(TempFolderTest, TryReadFileWithTildeInName)
 {
 	auto const test_file = tempFolder / std::filesystem::path("~testfile.txt");
-	create_file(test_file);
+	create_file(test_file, "dlfsoboiregnjrng");
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create file with tilde in the name.";
 
 	constexpr auto fset{ std::ios::binary | std::ios::out };
