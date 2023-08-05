@@ -91,3 +91,16 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 	create_file(test_file);
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
 }
+
+// Ensure test does not hang when trying to read a file with a tilde in the name.
+TEST_F(TempFolderTest, TryReadFileWithTildeInName)
+{
+	auto const test_file = tempFolder / std::filesystem::path("~testfile.txt");
+	create_file(test_file);
+	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create file with tilde in the name.";
+
+	constexpr auto fset{ std::ios::binary | std::ios::out };
+
+	auto file_open_attempt = std::ifstream(test_file, fset);
+	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
+}
