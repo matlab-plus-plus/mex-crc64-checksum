@@ -1,5 +1,6 @@
 #include "crc.hpp"
 
+#include "fileutil.hpp"
 #include <gtest/gtest.h>
 
 #include <filesystem>
@@ -33,19 +34,6 @@ protected:
 	std::filesystem::path tempFolder;
 };
 
-// Function for creating file if it doesn't already exist.
-[[maybe_unused]] bool create_file(std::filesystem::path const& file_name, std::string_view contents = "")
-{
-	if (std::filesystem::exists(file_name))
-		return false;
-
-	auto fs = std::ofstream(file_name, std::ios::out);
-	if (!contents.empty())
-		fs << contents;
-
-	return true;
-}
-
 // Ensure test does not hang when getting checksum of a nonexistent file.
 TEST(HangTest, TryReadNonexistentFile)
 {
@@ -70,7 +58,7 @@ TEST(HangTest, TryReadNonexistentFile)
 TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 {
 	auto const test_file = tempFolder / "test.txt";
-	create_file(test_file);
+	fileutil::create_file(test_file);
 	
 	constexpr auto fset{ std::ios::binary | std::ios::out };
 
@@ -91,15 +79,16 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 {
 	// Long file name generated as a random 257-character string on https://codebeautify.org/generate-random-string
 	auto const test_file = tempFolder / "GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBULPwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz";
-	create_file(test_file);
-	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
+	auto const test_file_safe_path = fileutil::windows_long_path_prefix / test_file;
+	fileutil::create_file(test_file_safe_path);
+	ASSERT_TRUE(std::filesystem::exists(test_file_safe_path)) << "Failed to create long file.";
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.
 TEST_F(TempFolderTest, TryReadFileWithTildeInName)
 {
 	auto const test_file = tempFolder / std::filesystem::path("~testfile.txt");
-	create_file(test_file, "dlfsoboiregnjrng");
+	fileutil::create_file(test_file, "dlfsoboiregnjrng");
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create file with tilde in the name.";
 
 	constexpr auto fset{ std::ios::binary | std::ios::out };
