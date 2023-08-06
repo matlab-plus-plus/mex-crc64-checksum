@@ -1,8 +1,11 @@
 
 #include "fileutil.hpp"
 
+#include "private_fileutil_windows.hpp"
+
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <stdio.h>
 #include <string_view>
 
@@ -18,5 +21,17 @@ namespace fileutil
 			fs << contents;
 
 		return true;
+	}
+
+	file_hold_token::file_hold_token(std::filesystem::path const& fp)
+	{
+		this->file_handler = std::make_unique<platform_specific_file_handler>(fp);
+	}
+
+	file_hold_token::~file_hold_token() = default;
+
+	[[nodiscard]] file_hold_token file_hold_token::create(std::filesystem::path const& fp)
+	{
+		return file_hold_token(fp);
 	}
 }

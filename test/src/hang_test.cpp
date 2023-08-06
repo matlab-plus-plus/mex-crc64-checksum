@@ -58,14 +58,12 @@ TEST(HangTest, TryReadNonexistentFile)
 TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 {
 	auto const test_file = tempFolder / "test.txt";
-	fileutil::create_file(test_file);
 	
-	constexpr auto fset{ std::ios::binary | std::ios::out };
-
-	auto file_open_first = std::ifstream(test_file, fset);
+	auto scoped_file_lock = fileutil::file_hold_token::create(test_file);
 
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "File should exist because we just created it.";
 
+	constexpr auto fset{ std::ios::binary | std::ios::out };
 	auto file_open_second_attempt = std::ifstream(test_file, fset);
 
 	ASSERT_FALSE(file_open_second_attempt.good()) << "File should not be able to be opened the second time because it is already opened.";

@@ -77,6 +77,7 @@ target_sources(
 	file_util_lib
 	PUBLIC  ./src/fileutil.hpp
 	PRIVATE ./src/fileutil.cpp
+	        ./src/private_fileutil_windows.hpp
 )
 target_include_directories(
 	file_util_lib
