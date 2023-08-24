@@ -17,9 +17,11 @@ protected:
 		tempFolder = std::filesystem::temp_directory_path();
 
 		{
-			char const* tmpFolderStemName = tmpnam(nullptr);
+			char const*const tmpFolderStemName = tmpnam(nullptr);
 			tempFolder /= tmpFolderStemName;
-			delete tmpFolderStemName;
+			// Note: Don't need to delete tmpFolderStemName because
+			//       we pass nullptr to tmpnam, which then uses an
+			//       internal static buffer.
 		}
 
 		std::filesystem::create_directory(tempFolder);
