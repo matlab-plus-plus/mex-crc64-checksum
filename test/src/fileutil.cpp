@@ -11,6 +11,24 @@
 
 namespace fileutil
 {
+	std::filesystem::path create_long_path(std::filesystem::path const& file_path)
+	{
+		// Simply return the input if *not* Windows, since other operating
+		// systems don't impose the same restriction as Windows.
+#		ifndef _WIN32
+			return file_path;
+		#endif
+		
+		// Return the input if it already begins with the Windows
+		// long path prefix.
+		if (file_path.string().starts_with(windows_long_path_prefix))
+			return file_path;
+
+		return std::filesystem::path(
+			windows_long_path_prefix + file_path.string()
+		);
+	}
+
 	[[maybe_unused]] bool create_file(std::filesystem::path const& file_name, std::string_view contents)
 	{
 		if (std::filesystem::exists(file_name))
@@ -21,6 +39,13 @@ namespace fileutil
 			fs << contents;
 
 		return true;
+	}
+
+	void create_long_file(std::filesystem::path const& fp)
+	{
+		auto scoped_file_creator = platform_specific_file_handler(
+			create_long_path(fp)
+		);
 	}
 
 	file_hold_token::file_hold_token(std::filesystem::path const& fp)

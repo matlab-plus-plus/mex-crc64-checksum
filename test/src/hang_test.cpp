@@ -7,6 +7,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <string_view>
+#include <system_error>
 
 // Create fixture for temporary file creation
 class TempFolderTest : public ::testing::Test
@@ -30,7 +31,8 @@ protected:
 	void TearDown() override
 	{
 		// Delete the directory we created during setup and everything inside.
-		std::filesystem::remove_all(tempFolder);
+		std::error_code ec{};
+		std::filesystem::remove_all(tempFolder, ec);
 	}
 
 	std::filesystem::path tempFolder;
@@ -77,11 +79,22 @@ TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 // Ensure test does not hang when trying to open a really long file path (>260 characters)
 TEST_F(TempFolderTest, TryReadReallyLongFile)
 {
-	// Long file name generated as a random 257-character string on https://codebeautify.org/generate-random-string
-	auto const test_file = tempFolder / "GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBULPwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz";
-	auto const test_file_safe_path = fileutil::windows_long_path_prefix / test_file;
-	fileutil::create_file(test_file_safe_path);
-	ASSERT_TRUE(std::filesystem::exists(test_file_safe_path)) << "Failed to create long file.";
+	// Long file name generated as a random 257-character string on https://codebeautify.org/generate-random-string\
+	// and then split so that the full filename itself is not longer than 255 characters.
+	// This has a long path but not a *file* (or directory) that is too long.
+	auto const test_file = fileutil::create_long_path(
+		tempFolder /
+		"GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBUL" /
+		"PwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz"
+	);
+
+	// Because we split the path into a new directory *and* file,
+	// we have to create the new, intermediate, directory.
+	ASSERT_TRUE(std::filesystem::create_directory(test_file.parent_path())) <<
+		"Failed creating the new intermediate directory during test case setup.";
+
+	fileutil::create_long_file(test_file);
+	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.
