@@ -43,7 +43,7 @@ namespace fileutil
 
 	void create_long_file(std::filesystem::path const& fp)
 	{
-		auto scoped_file_creator = platform_specific_file_handler(
+		create_file(
 			create_long_path(fp)
 		);
 	}
