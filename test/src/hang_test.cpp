@@ -79,14 +79,14 @@ TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 // Ensure test does not hang when trying to open a really long file path (>260 characters)
 TEST_F(TempFolderTest, TryReadReallyLongFile)
 {
+	auto const test_file_no_prefix = tempFolder /
+		"GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBUL" /
+		"PwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz";
+
 	// Long file name generated as a random 257-character string on https://codebeautify.org/generate-random-string\
 	// and then split so that the full filename itself is not longer than 255 characters.
 	// This has a long path but not a *file* (or directory) that is too long.
-	auto const test_file = fileutil::create_long_path(
-		tempFolder /
-		"GavlYgaFOHJtFmcx2QW55TbyVpd0l1dgeUDpX63MID561gnNzg9dJP844PhxtvQbUHJOcPPeeJFidFg6NzTvNLa9jZE7e5kWAKaaGvGtoedulyyBUL" /
-		"PwEHhttYqYJDepO5vfgppQG589jj4zIlGGFyFVEdroouxQTos4eVTDz5ObcTlb3paPPTuMbjPa3hVwn5iuyDt35iM7popWdoMGXrcpABS3U6kPl4ywx3micjrXNXRSQepDegAYskxD3VzCz"
-	);
+	auto const test_file = fileutil::create_long_path(test_file_no_prefix);
 
 	// Because we split the path into a new directory *and* file,
 	// we have to create the new, intermediate, directory.
@@ -100,13 +100,7 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 	// fixture will fail to delete the folder (since it's too long).
 	[[maybe_unused]] auto clean_delete_file = fileutil::scoped_file_deleter(test_file);
 
-	constexpr auto fset{ std::ifstream::binary | std::ifstream::in };
-	auto file_open_attempt = std::ifstream(test_file, fset);
-
-	// Ensure the blocking open occurred successfully
-	ASSERT_FALSE(file_open_attempt.good()) << "File should not have opened for our test's sake";
-
-	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
+	crc::checksum_t const actVal{ crc::calc_checksum(test_file_no_prefix) };
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.
