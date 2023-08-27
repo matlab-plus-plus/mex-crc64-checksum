@@ -43,9 +43,10 @@ namespace crc
 		do {
 			thisByte = static_cast<unsigned char>(is.get());
 
-			if (is.eof())
+			if (!is.good())
 			{
-				// Get operation above returned garbage because end-of-file was reached
+				// Get operation above returned garbage because end-of-file
+				// was reached or there was a problem.
 				break;
 			}
 
