@@ -36,4 +36,15 @@ namespace fileutil
 		[[nodiscard]] static file_hold_token create(std::filesystem::path const& file_name);
 		~file_hold_token();
 	};
+
+	// Class for attempting to delete a file when the object goes out of scope.
+	// If this class fails to delete the file, nothing happens.
+	class scoped_file_deleter
+	{
+		std::filesystem::path fp;
+	public:
+		scoped_file_deleter() = delete;
+		explicit scoped_file_deleter(std::filesystem::path const& fp) : fp(fp) {}
+		~scoped_file_deleter();
+	};
 }

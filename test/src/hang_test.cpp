@@ -95,6 +95,10 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 
 	fileutil::create_long_file(test_file);
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
+
+	// Need to manually delete the long file because our
+	// fixture will fail to delete the folder (since it's too long).
+	[[maybe_unused]] auto clean_delete_file = fileutil::scoped_file_deleter(test_file);
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.

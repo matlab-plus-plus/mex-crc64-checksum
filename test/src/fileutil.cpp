@@ -59,4 +59,13 @@ namespace fileutil
 	{
 		return file_hold_token(fp);
 	}
+
+	scoped_file_deleter::~scoped_file_deleter()
+	{
+		try
+		{
+			std::filesystem::remove(this->fp);
+		}
+		catch (...) {/* Can't throw in a destructor.*/} 
+	}
 }
