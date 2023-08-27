@@ -99,6 +99,14 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 	// Need to manually delete the long file because our
 	// fixture will fail to delete the folder (since it's too long).
 	[[maybe_unused]] auto clean_delete_file = fileutil::scoped_file_deleter(test_file);
+
+	constexpr auto fset{ std::ifstream::binary | std::ifstream::in };
+	auto file_open_attempt = std::ifstream(test_file, fset);
+
+	// Ensure the blocking open occurred successfully
+	ASSERT_FALSE(file_open_attempt.good()) << "File should not have opened for our test's sake";
+
+	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.
