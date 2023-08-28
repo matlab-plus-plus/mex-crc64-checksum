@@ -57,8 +57,8 @@ TEST(HangTest, TryReadNonexistentFile)
 	// Ensure the blocking open occurred successfully
 	ASSERT_FALSE(file_open_attempt.good()) << "File should not have opened for our test's sake";
 
-	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
-	// TODO: The above should trigger an exception.
+	EXPECT_THROW(crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) }, crc::invalid_stream_error) <<
+		"Attempting to calculate the checksum on an already-opened file stream should trigger an invalid_stream_error exception.";
 }
 
 // Ensure test does not hang when getting checksum of an already-opened file.
@@ -75,8 +75,8 @@ TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 
 	ASSERT_FALSE(file_open_second_attempt.good()) << "File should not be able to be opened the second time because it is already opened.";
 
-	crc::checksum_t const actVal{ crc::calc_checksum(file_open_second_attempt) };
-	// TODO: The above should trigger an exception.
+	EXPECT_THROW(crc::checksum_t const actVal{ crc::calc_checksum(file_open_second_attempt) }, crc::invalid_stream_error) <<
+		"Attempting to calculate the checksum on an already-opened file should trigger an invalid_stream_error exception.";
 }
 
 // Ensure test does not hang when trying to open a really long file path (>260 characters)

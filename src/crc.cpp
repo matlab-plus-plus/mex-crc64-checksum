@@ -6,6 +6,7 @@
 #include <fstream>
 #include <istream>
 #include <ranges>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 
@@ -38,6 +39,9 @@ namespace crc
 	checksum_t calc_checksum(std::istream& is)
 	{
 		/* Calculates the checksum of an input stream */
+		if (is.fail())
+			throw invalid_stream_error("Input stream invalid i.e. fail() method is true.");
+
 		ext::boost_crc64 crc64_calc{};
 		crc64_calc.reset();
 
@@ -71,4 +75,6 @@ namespace crc
 
 		return crc64_calc.checksum();
 	}
+
+	invalid_stream_error::invalid_stream_error(std::string const& what_str) : std::runtime_error(what_str) {}
 }

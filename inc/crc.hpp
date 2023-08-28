@@ -2,6 +2,8 @@
 
 #include <filesystem>
 #include <istream>
+#include <stdexcept>
+#include <string>
 #include <string_view>
 
 namespace crc
@@ -14,4 +16,10 @@ namespace crc
 	checksum_t calc_checksum(std::filesystem::path const);
 	checksum_t calc_checksum(std::istream&);
 	checksum_t calc_checksum(std::string_view) noexcept;
+
+	class invalid_stream_error : public std::runtime_error
+	{
+	public:
+		explicit invalid_stream_error(std::string const&);
+	};
 }
