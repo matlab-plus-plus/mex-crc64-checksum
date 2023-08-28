@@ -9,6 +9,8 @@
 #include <string_view>
 #include <system_error>
 
+using namespace std::literals;
+
 // Create fixture for temporary file creation
 class TempFolderTest : public ::testing::Test
 {
@@ -56,6 +58,7 @@ TEST(HangTest, TryReadNonexistentFile)
 	ASSERT_FALSE(file_open_attempt.good()) << "File should not have opened for our test's sake";
 
 	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
+	// TODO: The above should trigger an exception.
 }
 
 // Ensure test does not hang when getting checksum of an already-opened file.
@@ -73,7 +76,7 @@ TEST_F(TempFolderTest, TryReadAlreadyOpenedFile)
 	ASSERT_FALSE(file_open_second_attempt.good()) << "File should not be able to be opened the second time because it is already opened.";
 
 	crc::checksum_t const actVal{ crc::calc_checksum(file_open_second_attempt) };
-
+	// TODO: The above should trigger an exception.
 }
 
 // Ensure test does not hang when trying to open a really long file path (>260 characters)
@@ -93,7 +96,9 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 	ASSERT_TRUE(std::filesystem::create_directory(test_file.parent_path())) <<
 		"Failed creating the new intermediate directory during test case setup.";
 
-	fileutil::create_long_file(test_file);
+	auto const test_data = "sdfkljsd09wrlkjv09fwifje"sv;
+
+	fileutil::create_long_file(test_file, test_data);
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create long file.";
 
 	// Need to manually delete the long file because our
@@ -101,17 +106,27 @@ TEST_F(TempFolderTest, TryReadReallyLongFile)
 	[[maybe_unused]] auto clean_delete_file = fileutil::scoped_file_deleter(test_file);
 
 	crc::checksum_t const actVal{ crc::calc_checksum(test_file_no_prefix) };
+
+	// Compute expected value of the test_file's contents to compare against.
+	crc::checksum_t const expVal{ crc::calc_checksum(test_data) };
+
+	EXPECT_EQ(actVal, expVal) << "Checksum computed from file does not match that computed from a string literal.";
 }
 
 // Ensure test does not hang when trying to read a file with a tilde in the name.
 TEST_F(TempFolderTest, TryReadFileWithTildeInName)
 {
 	auto const test_file = tempFolder / std::filesystem::path("~testfile.txt");
-	fileutil::create_file(test_file, "dlfsoboiregnjrng");
+	auto const test_data = "dlfsoboiregnjrng"sv;
+	fileutil::create_file(test_file, test_data);
 	ASSERT_TRUE(std::filesystem::exists(test_file)) << "Failed to create file with tilde in the name.";
 
 	constexpr auto fset{ std::ios::binary | std::ios::out };
 
 	auto file_open_attempt = std::ifstream(test_file, fset);
 	crc::checksum_t const actVal{ crc::calc_checksum(file_open_attempt) };
+
+	crc::checksum_t const expVal{ crc::calc_checksum(test_data) };
+
+	EXPECT_EQ(actVal, expVal) << "Checksum computed from file does not match that computed from a string literal.";
 }
