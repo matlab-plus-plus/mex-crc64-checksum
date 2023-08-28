@@ -12,6 +12,7 @@ namespace fileutil
 {
 	// File-scope constants
 	inline std::string const windows_long_path_prefix{ R"(\\?\)" };
+	inline constexpr std::size_t windows_max_path_length{ 260u };
 
 	// Adds the Windows long path prefix if the system is Windows.
 	// Returns a normal std::filesystem::path object.
