@@ -41,10 +41,10 @@ namespace fileutil
 		return true;
 	}
 
-	void create_long_file(std::filesystem::path const& fp)
+	void create_long_file(std::filesystem::path const& fp, std::string_view contents)
 	{
 		create_file(
-			create_long_path(fp)
+			create_long_path(fp), contents
 		);
 	}
 

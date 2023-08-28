@@ -21,7 +21,7 @@ namespace fileutil
 	[[maybe_unused]] bool create_file(std::filesystem::path const& file_name, std::string_view contents = "");
 
 	// Function for creating long file
-	void create_long_file(std::filesystem::path const& file_name);
+	void create_long_file(std::filesystem::path const& file_name, std::string_view contents = "");
 
 	// Class for holding a file open in a safe way
 	struct platform_specific_file_handler;
