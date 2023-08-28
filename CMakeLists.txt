@@ -9,6 +9,17 @@ include(CTest)
 
 add_subdirectory(./ext-deps)
 
+add_library(long_path_util STATIC)
+target_sources(
+	long_path_util
+	PUBLIC  "./inc/longpath/longpath.hpp"
+	PRIVATE "./src/longpath.cpp"
+)
+target_include_directories(
+	long_path_util
+	PUBLIC "./inc/longpath"
+)
+
 add_library(crc64_lib STATIC)
 target_sources(
 	crc64_lib
@@ -22,6 +33,7 @@ target_sources(
 target_link_libraries(
 	crc64_lib
 	PUBLIC Boost::crc
+	       long_path_util
 )
 target_include_directories(
 	crc64_lib

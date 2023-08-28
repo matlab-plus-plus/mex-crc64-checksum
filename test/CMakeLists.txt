@@ -83,6 +83,10 @@ target_include_directories(
 	file_util_lib
 	PUBLIC ./src/
 )
+target_link_libraries(
+	file_util_lib
+	PRIVATE long_path_util
+)
 
 add_executable(
 	hang_test
