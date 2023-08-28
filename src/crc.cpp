@@ -5,7 +5,9 @@
 #include <filesystem>
 #include <fstream>
 #include <istream>
+#include <ranges>
 #include <string>
+#include <string_view>
 
 namespace crc
 {
@@ -52,6 +54,20 @@ namespace crc
 
 			crc64_calc.process_byte(thisByte);
 		} while (true);
+
+		return crc64_calc.checksum();
+	}
+
+	checksum_t calc_checksum(std::string_view sv) noexcept
+	{
+		/* Calculates the checksum of a string */
+		ext::boost_crc64 crc64_calc{};
+		crc64_calc.reset();
+
+		std::ranges::for_each(
+			sv,
+			[&crc64_calc](unsigned char this_byte) {crc64_calc.process_byte(this_byte); }
+		);
 
 		return crc64_calc.checksum();
 	}
