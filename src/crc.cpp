@@ -2,6 +2,8 @@
 #include "private/chk_fmt.hpp"
 #include "private/ext_def.hpp"
 
+#include "longpath.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <istream>
@@ -32,7 +34,7 @@ namespace crc
 		static constexpr auto fset =
 			std::ifstream::binary | // Read bytes EXACTLY as they appear in file
 			std::ifstream::in;      // Open with read-only permissions
-		auto ifs = std::ifstream(fp, fset);
+		auto ifs = std::ifstream(fileutil::create_long_path(fp), fset); // TODO: Investigate the performance implications of an unconditional longpath conversion.
 		return calc_checksum(ifs);
 	}
 
