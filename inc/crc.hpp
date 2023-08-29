@@ -22,4 +22,10 @@ namespace crc
 	public:
 		explicit invalid_stream_error(std::string const&);
 	};
+
+	class file_open_error : public std::runtime_error
+	{
+	public:
+		explicit file_open_error(std::string const&);
+	};
 }

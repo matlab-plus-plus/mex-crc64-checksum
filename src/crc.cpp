@@ -35,6 +35,10 @@ namespace crc
 			std::ifstream::binary | // Read bytes EXACTLY as they appear in file
 			std::ifstream::in;      // Open with read-only permissions
 		auto ifs = std::ifstream(fileutil::create_long_path(fp), fset); // TODO: Investigate the performance implications of an unconditional longpath conversion.
+
+		if (ifs.fail())
+			throw file_open_error("Failed to open file '" + fp.string() + "' while attempting to calculate checksum.");
+
 		return calc_checksum(ifs);
 	}
 
@@ -78,5 +82,7 @@ namespace crc
 		return crc64_calc.checksum();
 	}
 
+	// Exceptions
 	invalid_stream_error::invalid_stream_error(std::string const& what_str) : std::runtime_error(what_str) {}
+	file_open_error::file_open_error(std::string const& what_str) : std::runtime_error(what_str) {}
 }
