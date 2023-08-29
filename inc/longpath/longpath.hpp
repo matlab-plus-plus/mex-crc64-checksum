@@ -6,12 +6,31 @@
 
 #include <filesystem>
 #include <stdint.h>
-#include <string>
+#include <string_view>
+#include <numbers>
 
 namespace fileutil
 {
 	// File-scope constants
-	inline std::string const windows_long_path_prefix{ R"(\\?\)" };
+	template<typename string_t = std::string_view>
+	struct windows_long_path_prefix_v
+	{
+		using value_t = string_t;
+		static constexpr value_t value(void)
+		{
+			return R"(\\?\)";
+		}
+	};
+
+	template<>
+	static constexpr std::wstring_view windows_long_path_prefix_v<std::wstring_view>::value(void)
+	{
+		return L"\\\\?\\";
+	}
+
+	inline constexpr std::string_view windows_long_path_prefix{ windows_long_path_prefix_v<std::string_view>::value() };
+	inline constexpr std::wstring_view windows_long_path_prefix_wide{ windows_long_path_prefix_v<std::wstring_view>::value() };
+
 	inline constexpr std::size_t windows_max_path_length{ 260u };
 
 	// Adds the Windows long path prefix if the system is Windows.
