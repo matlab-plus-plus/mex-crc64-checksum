@@ -7,6 +7,8 @@
 #include <filesystem>
 #include <format>
 
+int handle_checksum_calculation(std::filesystem::path const& fp);
+
 int main(int argc, char* argv[])
 {
 	if (argc <= 1)
@@ -23,14 +25,33 @@ int main(int argc, char* argv[])
 		return codes::return_code<codes::eReturnCode::FILE_NOT_FOUND_ERROR>;
 	}
 
-	if (std::filesystem::is_directory(f))
+	try
 	{
-		std::cout << crc::str_dir_checksum(f);
+		return handle_checksum_calculation(f);
+	}
+	catch (crc::file_open_error const& foe)
+	{
+		std::cout << "Failed calculating checksum:\n\t" << foe.what();
+		return codes::return_code<codes::eReturnCode::FILE_OPEN_ERROR>;
+	}
+	catch (...)
+	{
+		std::cout << "Failed calculating checksum for unknown reason.";
+		return codes::return_code<codes::eReturnCode::UNKNOWN_ERROR>;
+	}
+}
+
+int handle_checksum_calculation(std::filesystem::path const& fp)
+{
+	if (std::filesystem::is_directory(fp))
+	{
+		std::cout << crc::str_dir_checksum(fp);
+		
 		return codes::return_code<codes::eReturnCode::SUCCESS>;
 	}
 
 	/* Open input filestream from provided file */
-	std::cout << crc::str_checksum(f) << std::endl;
+	std::cout << crc::str_checksum(fp) << std::endl;
 
 	return codes::return_code<codes::eReturnCode::SUCCESS>;
 }
