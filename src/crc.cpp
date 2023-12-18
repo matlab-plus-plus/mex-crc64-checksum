@@ -37,7 +37,9 @@ namespace crc
 		auto ifs = std::ifstream(fileutil::create_long_path(fp), fset); // TODO: Investigate the performance implications of an unconditional longpath conversion.
 
 		if (ifs.fail())
-			throw file_open_error("Failed to open file '" + fp.string() + "' while attempting to calculate checksum.");
+		{
+			throw file_open_error(fp);
+		}
 
 		return calc_checksum(ifs);
 	}
@@ -84,5 +86,13 @@ namespace crc
 
 	// Exceptions
 	invalid_stream_error::invalid_stream_error(std::string const& what_str) : std::runtime_error(what_str) {}
-	file_open_error::file_open_error(std::string const& what_str) : std::runtime_error(what_str) {}
+
+	file_open_error::file_open_error(std::filesystem::path const& fp) : msg(
+		"Failed to open file '" + fp.string() + "' while attempting to calculate checksum."
+	) {}
+
+	const char* file_open_error::what(void) const noexcept
+	{
+		return this->msg.c_str();
+	}
 }
