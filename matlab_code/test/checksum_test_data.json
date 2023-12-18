@@ -1,0 +1,10 @@
+{
+    "empty" : {
+        "input_text" : "",
+        "output_hex" : "0000000000000000"
+    },
+    "check" : {
+        "input_text" : "123456789",
+        "output_hex" : "995DC9BBDF1939FA"
+    }
+}
