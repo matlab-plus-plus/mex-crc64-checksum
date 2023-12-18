@@ -1,3 +1,3 @@
 function Str = toHexString(Num)
-Str = upper(sprintf("%x", Num));
+Str = upper(sprintf("%016x", Num));
 end
