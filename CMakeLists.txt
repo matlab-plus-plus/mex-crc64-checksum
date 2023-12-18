@@ -63,7 +63,7 @@ target_link_libraries(
 	PRIVATE crc64_lib
 )
 
-find_package(Matlab 9.8 REQUIRED)
+find_package(Matlab 9.8 REQUIRED MAIN_PROGRAM)
 matlab_add_mex(
 	NAME crc_mex
 	SHARED
@@ -95,6 +95,16 @@ target_link_libraries(
 # Tests
 add_subdirectory(./test)
 
+file(REAL_PATH ./matlab_code MATLAB_CODE_FOLDER)
+cmake_path(APPEND MATLAB_CODE_FOLDER test TestCrc64.m OUTPUT_VARIABLE MATLAB_TEST_FILE)
+
+matlab_add_unit_test(
+	NAME installed_matlab_tests
+	UNITTEST_FILE ${MATLAB_TEST_FILE}
+	ADDITIONAL_PATH ${MATLAB_CODE_FOLDER}
+)
+
+# Installation
 install(TARGETS crc64_lib crc64 crc_mex)
 install(
 	DIRECTORY ./matlab_code/+crc64
