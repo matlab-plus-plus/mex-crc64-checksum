@@ -32,7 +32,7 @@
         "output_hex" : "3D8A249DEA572D65"
     },
     "maxbyte_1" : {
-        "input_text" : "aÿ",
+        "input_file" : "maxbyte-1.txt",
         "output_hex" : "37CD8DBE8B066477"
     }
 }
