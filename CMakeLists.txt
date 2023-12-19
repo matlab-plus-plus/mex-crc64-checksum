@@ -105,7 +105,10 @@ matlab_add_unit_test(
 )
 
 # Installation
-install(TARGETS crc64_lib crc64 crc_mex)
+install(TARGETS crc64_lib crc64)
+install(TARGETS crc_mex
+	RUNTIME DESTINATION ./+crc64/private
+)
 install(
 	DIRECTORY ./matlab_code/+crc64
 			  ./matlab_code/test
