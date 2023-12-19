@@ -6,5 +6,33 @@
     "check" : {
         "input_text" : "123456789",
         "output_hex" : "995DC9BBDF1939FA"
+    },
+    "check_reverse" : {
+        "input_text" : "987654321",
+        "output_hex" : "E7ADEF3D663C7E22"
+    },
+    "basic_test" : {
+        "input_text" : "test file text",
+        "output_hex" : "DD9ACD49D90CE187"
+    },
+    "null_sequence_1" : {
+        "input_file" : "null-sequence-1.dat",
+        "output_hex" : "14A6C721506FB0F0"
+    },
+    "eight_ones" : {
+        "input_text" : "11111111",
+        "output_hex" : "A05AC6AA26A9F8B1"
+    },
+    "eight_zeros" : {
+        "input_text" : "00000000",
+        "output_hex" : "A080A25B7830E6F0"
+    },
+    "keyboard_mash" : {
+        "input_text" : "slkfaslj;lsjflsjfoisjfoiwjfowijfpowijrf9wijd;akjsf.ksdmgli;jr93ju4roij3kjsdflksjdfv09sufj0[wjr3iqjf;ljeg[oiwj[gvoijeq;lwkrnq;lwj[i]sdpifv[pgjdwg;jhepgtj[2ojt'lkasglidjg[pejt[o234ij[984-9g8ut7bhys08d7hv0hneqnrf;lwjfpoidsbfpoihrwbiuhrn;tjgenar;lkvnds;lkfnbk;rwhbtpiwrje'lvjadlkfnb;kfjnhbpirwhqe[ijgrv;dhfbpiwrhoe'rjvaspihsb[jrwbpo;qegkrs;mvnfiuvvbor[t;oeqjg;rjjeioviobw,jopgivcmtiou oiieoti o gjndkg nakjnfg,d g dg agn jh o bpj b\tkh iuhi0uih piuh pohioh ipuh iouh \tipuh ipuh\t ipu hpih ph PIUH IOUHuh ip hipuoh IPh ipuh Iph PHpuh iugh98ewhrtpgwejfphqwptugdlvihapisrhg[pew9ugj;kdwjhvipqeurgpejglhfiuirj48ur89g9hasfkjenfkjngxfbijdj ljlqj lkj lsjf;lkjdflkase;lfkjwpeojvedsv/kjdflkjasdljuv0dfuvje9r oaersofh asoeaa[o ew we 's as f[passd s  ",
+        "output_hex" : "3D8A249DEA572D65"
+    },
+    "maxbyte_1" : {
+        "input_text" : "aÿ",
+        "output_hex" : "37CD8DBE8B066477"
     }
 }
