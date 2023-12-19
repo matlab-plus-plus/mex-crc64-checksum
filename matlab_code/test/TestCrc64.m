@@ -74,11 +74,19 @@ classdef TestCrc64 < matlab.unittest.TestCase
             ActChecksum = crc64.FileChecksum(InputFile, "AsHexString", OutputFormatAsHex);
             TestCase.verifyEqual(ActChecksum, ExpChecksum)
         end
+        
+        function TestFileChecksumThrowsWhenFileDoesNotExist(TestCase)
+            import matlab.unittest.constraints.Throws
+            
+            TempFile = TestCase.GenNewFileName();
+            
+            TestCase.verifyThat(@() crc64.FileChecksum(TempFile), Throws("mustBeFile:InputNotFile"));
+        end
     end
     
     methods (Access = private)
         function NewFile = CreateFile(TestCase, Text)
-            NewFile = tempname(TestCase.WorkingFolder);
+            NewFile = TestCase.GenNewFileName();
             filewrite(Text, NewFile);
         end
         
@@ -87,8 +95,12 @@ classdef TestCrc64 < matlab.unittest.TestCase
             
             TestCase.assumeThat(FileName, IsFile());
             
-            NewFile = tempname(TestCase.WorkingFolder);
+            NewFile = TestCase.GenNewFileName();
             copyfile(FileName, NewFile);
+        end
+        
+        function NewFile = GenNewFileName(TestCase)
+            NewFile = tempname(TestCase.WorkingFolder);
         end
     end
 end
