@@ -17,7 +17,7 @@ namespace crc
 	//checksum_t should be same as boost::ulong_long_type
 	//   TODO: Add static_assert to check this
 
-	std::string str_checksum(std::filesystem::path const fp)
+	std::string str_checksum(std::filesystem::path const& fp)
 	{
 		return _internal::format_checksum(calc_checksum(fp));
 	}
@@ -26,7 +26,7 @@ namespace crc
 		return _internal::format_checksum(calc_checksum(is));
 	}
 
-	checksum_t calc_checksum(std::filesystem::path const fp)
+	checksum_t calc_checksum(std::filesystem::path const& fp)
 	{
 		/* Calculates the checksum of a file. */
 

@@ -11,6 +11,6 @@
 
 namespace crc
 {
-	std::string str_dir_checksum(std::filesystem::path const);
-	checksum_t calc_dir_checksum(std::filesystem::path const);
+	std::string str_dir_checksum(std::filesystem::path const&);
+	checksum_t calc_dir_checksum(std::filesystem::path const&);
 }

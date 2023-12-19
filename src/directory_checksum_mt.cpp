@@ -25,7 +25,7 @@ namespace
 
 		file_code(void) = default;
 
-		file_code(fs::path const p, crc::checksum_t const chksm) :
+		file_code(fs::path const& p, crc::checksum_t const chksm) :
 			path(p), checksum(chksm) {}
 	};
 
@@ -46,12 +46,12 @@ namespace
 
 namespace crc
 {
-	std::string str_dir_checksum(fs::path const dir)
+	std::string str_dir_checksum(fs::path const& dir)
 	{
 		return _internal::format_checksum(calc_dir_checksum(dir));
 	}
 
-	checksum_t calc_dir_checksum(fs::path const dir)
+	checksum_t calc_dir_checksum(fs::path const& dir)
 	{
 		assert(fs::is_directory(dir) /* Provided path must be a directory. */);
 		
