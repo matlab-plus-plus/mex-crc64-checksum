@@ -82,6 +82,14 @@ classdef TestCrc64 < matlab.unittest.TestCase
             
             TestCase.verifyThat(@() crc64.FileChecksum(TempFile), Throws("mustBeFile:InputNotFile"));
         end
+        
+        function TestFolderChecksumThrowsWhenFileDoesNotExist(TestCase)
+            import matlab.unittest.constraints.Throws
+            
+            TempFolder = tempname();
+            
+            TestCase.verifyThat(@() crc64.FolderChecksum(TempFolder), Throws("mustBeFolder:InputNotFolder"));
+        end
     end
     
     methods (Access = private)
