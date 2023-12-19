@@ -7,7 +7,7 @@ classdef TestCrc64 < matlab.unittest.TestCase
     end
     
     properties (TestParameter)
-        IODataPair = jsondecode(fileread("checksum_test_data.json"));
+        IODataPair = jsondecode(fileread(fullfile("private", "checksum_test_data.json")));
         OutputFormatAsHex = struct("hex", true, "int", false);
     end
     
@@ -32,7 +32,7 @@ classdef TestCrc64 < matlab.unittest.TestCase
             % as null-termination, so we will need to read some data from
             % files.
             if isfield(IODataPair, "input_file")
-                InputText = fileread(IODataPair.input_file);
+                InputText = fileread(fullfile("private",IODataPair.input_file));
             else
                 InputText = IODataPair.input_text;
             end
@@ -57,7 +57,7 @@ classdef TestCrc64 < matlab.unittest.TestCase
             
             % Copy if input is already a file
             if isfield(IODataPair, "input_file")
-                OrigFile = fullfile(fileparts(mfilename("fullpath")), IODataPair.input_file);
+                OrigFile = fullfile(fileparts(mfilename("fullpath")), "private", IODataPair.input_file);
                 InputFile = TestCase.CopyFile(OrigFile);
             else
                 InputFile = TestCase.CreateFile(IODataPair.input_text);
