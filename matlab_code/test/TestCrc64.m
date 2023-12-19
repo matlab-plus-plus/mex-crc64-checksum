@@ -4,10 +4,11 @@ classdef TestCrc64 < matlab.unittest.TestCase
     
     properties (TestParameter)
         IODataPair = jsondecode(fileread("checksum_test_data.json"));
+        OutputFormatAsHex = struct("hex", true, "int", false);
     end
     
     methods (Test)
-        function TestTextChecksum(TestCase, IODataPair)
+        function TestTextChecksum(TestCase, IODataPair, OutputFormatAsHex)
             import matlab.unittest.constraints.HasField
             
             TestCase.assumeThat(IODataPair, HasField("input_text") | HasField("input_file"), ...
@@ -23,8 +24,25 @@ classdef TestCrc64 < matlab.unittest.TestCase
                 InputText = IODataPair.input_text;
             end
             
-            ActChecksum = crc64.TextChecksum(InputText, "AsHexString", true);
-            TestCase.verifyEqual(ActChecksum, string(IODataPair.output_hex))
+            % Need to convert the expected checksum to an int if we're not
+            % getting a hex string as output.
+            if OutputFormatAsHex
+                ExpChecksum = string(IODataPair.output_hex);
+            else
+                ExpChecksum = uint64(hex2int(IODataPair.output_hex));
+            end
+            
+            ActChecksum = crc64.TextChecksum(InputText, "AsHexString", OutputFormatAsHex);
+            TestCase.verifyEqual(ActChecksum, ExpChecksum)
         end
     end
+end
+
+function IntOut = hex2int(HexStr)
+% Can't directly use hex2dec because it loses precision.
+IntOut = bitor( ...
+    bitshift(uint64(hex2dec(HexStr(1:8))), 32), ...
+    uint64(hex2dec(HexStr(9:end))), ...
+    'uint64' ...
+);
 end
