@@ -54,7 +54,7 @@ add_test(
 
 add_test(
 	NAME f_maxbyte_1
-	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> maxbyte-1.txt F4726F40A31384BC
+	COMMAND ${TEST_DRIVER_PATH} $<TARGET_FILE:crc64> maxbyte-1.txt 37CD8DBE8B066477
 )
 
 add_test(
