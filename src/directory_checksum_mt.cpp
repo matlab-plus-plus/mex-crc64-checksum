@@ -11,6 +11,7 @@
 #include <cassert>
 #include <execution>
 #include <filesystem>
+#include <ranges>
 #include <string>
 #include <vector>
 
@@ -35,7 +36,7 @@ namespace
 		calc.reset();
 
 		std::vector<crc::checksum_t> chksmList(codeList.size());
-		std::transform(codeList.cbegin(), codeList.cend(), chksmList.begin(),
+		std::ranges::transform(codeList, std::back_inserter(chksmList),
 			[](auto const v) {return v.checksum; });
 
 		calc.process_bytes(chksmList.data(), chksmList.size());
@@ -74,7 +75,7 @@ namespace crc
 			[](auto const& p) {return file_code(p, calc_checksum(p)); });
 
 		// Sort the codes
-		std::sort(codeList.begin(), codeList.end(),
+		std::ranges::sort(codeList,
 			[](file_code const& L, file_code const& R) {return L.path < R.path; });
 
 		// Combine the codes together to form a single checksum
