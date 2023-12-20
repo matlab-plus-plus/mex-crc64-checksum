@@ -116,4 +116,5 @@ install(
 )
 install(TARGETS crc_mex
 	RUNTIME DESTINATION ./+crc64/private
+	COMPONENT mex
 )
